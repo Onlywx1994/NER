@@ -1,7 +1,7 @@
 import tensorflow as tf
 import random
 import numpy as np
-
+import bert
 class BILSTM(object):
 
     def __init__(self,embedding_dim,hidden_dim,vocab_size_char,vocab_size_bio,vocab_size_attr,tag_indx,use_crf):
@@ -29,10 +29,10 @@ class BILSTM(object):
 
         with tf.variable_scope("bio_projection"):
             logits_bio=tf.layers.dense(rnn_outputs,vocab_size_bio)
-            probos_bio=tf.nn.softmax(logits_bio,axis=-1)
+            probs_bio=tf.nn.softmax(logits_bio,axis=-1)
 
             if not use_crf:
-                preds_bio=tf.argmax(probos_bio,axis=-1,name="preds_bio")
+                preds_bio=tf.argmax(probs_bio,axis=-1,name="preds_bio")
             else:
                 log_likelihood,transition_matrix=tf.contrib.crf.crf_log_likelihood(logits_bio,
                                                                                    self.outputs_seq_bio,
